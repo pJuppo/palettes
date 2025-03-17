@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DIE! Buster Plus Palette Editor</title>
+</head>
+<body>
+	<input id="input" type="file" accept=".json"/><br>
+	<button onclick="loadJSON()">Load JSON</button>
+	<button onclick="newFile()">New...</button>
+	<button onclick="swapPaletteMode()">Swap palette type</button><br>
+	<canvas id="preview" width="480" height="270"></canvas><br>
+	<button onclick="exportJSON()">Export JSON</button>
+	<script>
+	const input = document.getElementById("input");
+	var palettes;
+	var paletteMode = 0;
+
+	function swapPaletteMode()
+	{
+		paletteMode = 1 - paletteMode;
+		flashIndex = 1;
+	}
+
+	function newFile()
+	{
+		if (fileLoaded) {
+			if (!confirm("Overwrite the current file?")) {
+				return;
+			}
+		}
+		fileLoaded = true;
+		resetPalettes();
+	}
+
+	function resetPalettes()
+	{
+		palettes = {
+			"buster": [
+				{
+					"name": "buster",
+					"type": 0,
+					"colors": [
+						[255, 255, 255, 255],
+						[42, 18, 26, 255],
+						[255, 196, 31, 255],
+						[255, 103, 0, 255],
+						[255, 204, 170, 255],
+						[255, 103, 0, 255],
+						[178, 12, 0, 255],
+						[255, 103, 0, 255],
+						[178, 12, 0, 255],
+					]
+				},
+				{
+					"name": "buster",
+					"type": 1,
+					"colors": [
+						[238, 255, 229, 255],
+						[42, 158, 22, 255],
+						[155, 255, 33, 255],
+						[109, 255, 0, 255],
+						[208, 255, 170, 255],
+						[109, 255, 0, 255],
+						[42, 158, 22, 255],
+						[109, 255, 0, 255],
+						[42, 158, 22, 255],
+					]
+				}
+			],
+			"bom": [
+				{
+					"name": "orange",
+					"type": 0,
+					"colors": [
+						[255, 255, 255, 255],
+						[102, 0, 0, 255],
+						[213, 45, 0, 255],
+						[213, 45, 0, 255],
+						[255, 103, 0, 255],
+						[255, 222, 166, 255],
+						[255, 204, 0, 255],
+						[255, 255, 255, 255],
+					]
+				},
+				{
+					"name": "orange",
+					"type": 1,
+					"colors": [
+						[255, 255, 255, 255],
+						[102, 0, 0, 255],
+						[213, 45, 0, 255],
+						[213, 45, 0, 255],
+						[255, 204, 0, 255],
+						[255, 222, 166, 255],
+						[255, 255, 255, 255],
+						[255, 255, 255, 255],
+					]
+				},
+				{
+					"name": "green",
+					"type": 0,
+					"colors": [
+						[255, 255, 255, 255],
+						[16, 86, 44, 255],
+						[26, 160, 108, 255],
+						[26, 160, 108, 255],
+						[40, 215, 181, 255],
+						[194, 243, 245, 255],
+						[255, 255, 255, 255],
+						[255, 255, 255, 255],
+					]
+				},
+				{
+					"name": "green",
+					"type": 1,
+					"colors": [
+						[255, 255, 255, 255],
+						[16, 86, 44, 255],
+						[26, 160, 108, 255],
+						[26, 160, 108, 255],
+						[255, 204, 0, 255],
+						[194, 243, 245, 255],
+						[255, 255, 255, 255],
+						[255, 255, 255, 255],
+					]
+				},
+				{
+					"name": "purple",
+					"type": 0,
+					"colors": [
+
+					]
+				},
+				{
+					"name": "purple",
+					"type": 1,
+					"colors": [
+
+					]
+				},
+			],
+		}
+	}
+
+	var fileLoaded = false;
+	var pattern = null;
+	
+	var previewReady = 0;
+	
+	function rgbaToHex(r, g, b, a)
+	{
+		return ((r << 16) + (g << 8) + b).toString(16).padStart(6, "0") + a.toString(16).padStart(2, "0");
+	}
+	console.log(rgbaToHex(0, 255, 0, 255))
+
+	function rgbaFillStyle(drawingContext, r, g, b, a)
+	{
+		drawingContext.fillStyle = "rgb(" + r + " " + g + " " + b + ")";
+		drawingContext.globalAlpha = a / 255;
+	}
+
+	function loadJSON()
+	{
+		if (input.files.length == 0) {
+			alert("Please select a file first.")
+			return;
+		}
+		if (fileLoaded) {
+			if (!confirm("Overwrite the current file?")) {
+				return;
+			}
+		}
+		const file = input.files[0];
+		const reader = new FileReader();
+		reader.onload = () => {
+			try {
+			palettes = JSON.parse(reader.result);
+			fileLoaded = true;
+			console.log(palettes);
+			} catch (error) {
+			alert("There was an error loading the JSON file:\n" + error.name + ": " + error.message);
+			}
+		}
+		reader.readAsText(file);
+	}
+	
+	function exportJSON()
+	{
+		if (!fileLoaded) {
+			alert("Please load a file first.");
+			return;
+		}
+		const json = JSON.stringify(palettes, null, "	");
+		const blob = new Blob([json], {type: "application/json"});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = "custom_palettes.json";
+		link.click();
+		URL.revokeObjectURL(url);
+	}
+	
+	function chooseRandom(...items)
+	{
+		if (items.length == 0) {
+			return undefined;
+		}
+		let index = Math.floor(Math.random() * items.length);
+		return items[index];
+	}
+	
+	const images = {};
+	const imageStructs = [
+		{
+			"name": "buster",
+			"path": "buster.png",
+			"type": 0,
+		},
+		{
+			"name": "bom",
+			"path": "bom.png",
+			"type": 0,
+		},
+		{
+			"name": "bom edge",
+			"path": "bom edge.png",
+			"type": 0,
+		},
+		{
+			"name": "pattern",
+			"path": "pattern.png",
+			"type": 1,
+		},
+		{
+			"name": "pipe",
+			"path": "pipe.png",
+			"type": 0,
+		},
+	];
+	const defaultColors = {
+		"buster": [
+			"ffffffff",
+			"2a121aff",
+			"ffc41fff",
+			"ff6700ff",
+			"ffccaaff",
+			"00ff00ff",
+			"00a651ff",
+			"00ffffff",
+			"00aef0ff",
+		],
+		"bom": [
+			"ffffffff",
+			"000000ff",
+			"0000ffff",
+			"404040ff",
+			"ff0000ff",
+			"ff8080ff",
+			"00ff00ff",
+			"ffff00ff",
+		],
+	}
+
+	const colorNames = {
+		"buster": [
+			"White",
+			"Outline",
+			"Gloves",
+			"Pants",
+			"Skin",
+			"Nose",
+			"Nose Outline",
+			"Spark",
+			"Spark Outline",
+		],
+		"bom": [
+			"White",
+			"Outline",
+			"Spark Outline",
+			"Color Dark",
+			"Color",
+			"Color Light",
+			"Eyes",
+			"Top",
+		],
+	}
+	
+	function loadImages()
+	{
+		imageStructs.forEach((struct) => {
+			let image = new Image();
+			let loadFunction = function() {
+				this.onload = null;
+				
+				if (this.name == "pattern") {
+					pattern = context.createPattern(this, "repeat");
+					previewReady++;
+					return;
+				}
+				
+				const imageCanvas = document.createElement("canvas");
+				imageCanvas.width = this.width;
+				imageCanvas.height = this.height;
+				const imageContext = imageCanvas.getContext("2d");
+
+				var colors = (this.name == "buster") ? defaultColors.buster : defaultColors.bom;
+
+				const masks = [];
+				for (let i = 0; i < colors.length; i++) {
+					masks[i] = imageContext.createImageData(imageCanvas.width, imageCanvas.height)
+				}
+				const rest = imageContext.createImageData(imageCanvas.width, imageCanvas.height);
+
+				imageContext.drawImage(this, 0, 0);
+				imageContext.globalCompositeOperation = "source-over";
+				const imageData = imageContext.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+				let data = imageData.data;
+
+				let matchIndex, currentColor;
+				let currentMask;
+				for (let i = 0; i < data.length; i += 4) {
+					const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+					if (r == 0) {
+						console.log("Found green");
+					}
+					currentColor = rgbaToHex(r, g, b, a)
+					matchIndex = colors.findIndex(function (color) {
+						return (color == currentColor);
+					});
+					currentMask = (matchIndex != -1) ? masks[matchIndex] : rest;
+					currentMask.data[i] = r;
+					currentMask.data[i + 1] = g;
+					currentMask.data[i + 2] = b;
+					currentMask.data[i + 3] = a;
+				}
+
+				let maskImages = [], maskImage;
+				masks.forEach((mask) => {
+					imageContext.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+					imageContext.putImageData(mask, 0, 0);
+					maskImage = new Image();
+					maskImage.src = imageCanvas.toDataURL();
+					maskImages.push(maskImage);
+				})
+				imageContext.putImageData(rest, 0, 0);
+				let restImage = new Image();
+				restImage.src = imageCanvas.toDataURL();
+
+				images[this.name] = {
+					masks: maskImages,
+					rest: restImage,
+				}
+				console.log(images[this.name]);
+
+				imageCanvas.remove();
+
+				previewReady++;
+			};
+			loadFunction.bind(image);
+			image.onload = loadFunction;
+			image.name = struct.name;
+			image.src = "Images/" + struct.path;
+		});
+	}
+	
+	const canvas = document.getElementById("preview");
+	const context = canvas.getContext("2d");
+	
+	var lastTimestamp = null;
+	var deltaTime = 0;
+	var patternTransform, flashIndex;
+	var transformMatrix = new DOMMatrix([1, 0, 0, 1, 0, 0]);
+		
+	function requestRefresh()
+	{
+		requestAnimationFrame(refresh);
+	}
+	
+	function drawImage(name, palette)
+	{
+		let tempCanvas = document.createElement("canvas");
+		images[name].masks.forEach(function(mask, index) {
+			tempCanvas.width = mask.width;
+			tempCanvas.height = mask.height;
+			let tempContext = tempCanvas.getContext("2d");
+			tempContext.drawImage(mask, 0, 0);
+			tempContext.globalCompositeOperation = "source-in";
+			rgbaFillStyle(tempContext, ...palette[index]);
+			tempContext.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+			context.drawImage(tempCanvas, 0, 0);
+		})
+		tempCanvas.remove();
+		context.drawImage(images[name].rest, 0, 0);
+	}
+
+	function refresh(timestamp)
+	{
+		if (lastTimestamp != null) {
+			deltaTime = (timestamp - lastTimestamp) / 1000;
+		}
+		lastTimestamp = timestamp;
+		
+		if (previewReady < imageStructs.length) {
+			requestRefresh();
+			return;
+		}
+		
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		
+		context.fillStyle = "#bfbfbf";
+		context.fillRect(0, 0, canvas.width, canvas.height);
+		
+		patternTransform = 20 * deltaTime;
+		transformMatrix = transformMatrix.translateSelf(patternTransform, patternTransform);
+		
+		pattern.setTransform(transformMatrix);
+
+		flashIndex += 20 * deltaTime;
+		flashIndex %= 2;
+		
+		context.fillStyle = pattern;
+		context.fillRect(0, 0, canvas.width, canvas.height);
+		
+		if (fileLoaded) {
+			if (paletteMode > 0) {
+				drawImage("bom edge", palettes.bom[2 + Math.floor(flashIndex)].colors);
+			} else {
+				drawImage("bom", palettes.bom[2].colors);
+			}
+			drawImage("pipe", palettes.bom[2].colors);
+		}
+		
+		requestRefresh();
+	}
+	
+	resetPalettes();
+	loadImages();
+	requestRefresh();
+	</script>
+</body>
+</html>
