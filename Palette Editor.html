@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DIE! Buster Plus Palette Editor</title>
+</head>
+<body>
+	<div id="content">
+		<canvas id="preview" width="480" height="270"></canvas><br>
+		<input id="input" type="file" accept=".json"/>
+		<button onclick="loadJSON()">Load JSON</button>
+		<button onclick="exportJSON()">Export JSON</button>
+		<button onclick="newFile()">New...</button><br>
+		<label for="characterDropdown">Edit palettes for: </label>
+		<select id="characterDropdown" onchange="changeCharacter()">
+			<option value="buster">Buster</option>
+			<option value="bom">Boms</option>
+		</select>
+		<button onclick="swapPaletteMode()">Swap palette type</button>
+	</div>
+	<script src="script.js"/>
+</body>
+</html>

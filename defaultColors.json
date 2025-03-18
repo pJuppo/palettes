@@ -1,0 +1,23 @@
+{
+	"buster": [
+		"ffffffff",
+		"2a121aff",
+		"ffc41fff",
+		"ff6700ff",
+		"ffccaaff",
+		"00ff00ff",
+		"00a651ff",
+		"00ffffff",
+		"00aef0ff"
+	],
+	"bom": [
+		"ffffffff",
+		"000000ff",
+		"0000ffff",
+		"404040ff",
+		"ff0000ff",
+		"ff8080ff",
+		"00ff00ff",
+		"ffff00ff"
+	]
+}
