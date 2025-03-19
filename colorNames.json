@@ -1,0 +1,23 @@
+{
+	"buster": [
+		"White",
+		"Outline",
+		"Gloves",
+		"Pants",
+		"Skin",
+		"Nose",
+		"Nose Outline",
+		"Spark",
+		"Spark Outline"
+	],
+	"bom": [
+		"White",
+		"Outline",
+		"Spark Outline",
+		"Color Dark",
+		"Color",
+		"Color Light",
+		"Eyes",
+		"Top"
+	]
+}

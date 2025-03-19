@@ -2,21 +2,40 @@
 <html>
 <head>
 	<title>DIE! Buster Plus Palette Editor</title>
+	<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+	<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-	<div id="content">
+	<div id="sectionContent">
 		<canvas id="preview" width="480" height="270"></canvas><br>
-		<input id="input" type="file" accept=".json"/>
+		<input id="inputFile" type="file" accept="application/json"/>
 		<button onclick="loadJSON()">Load JSON</button>
 		<button onclick="exportJSON()">Export JSON</button>
-		<button onclick="newFile()">New...</button><br>
-		<label for="characterDropdown">Edit palettes for: </label>
-		<select id="characterDropdown" onchange="changeCharacter()">
-			<option value="buster">Buster</option>
-			<option value="bom">Boms</option>
-		</select>
-		<button onclick="swapPaletteMode()">Swap palette type</button>
+		<button onclick="newFile()">New file</button><br>
+		<div id="sectionEdit">
+			<label for="inputFileName">File name:</label>
+			<input id="inputFileName" type="text"></input>
+			<label for="inputCharacter">Edit palettes for:</label>
+			<select id="inputCharacter" onchange="changeCharacter()">
+				<option value="buster" selected="true">Buster</option>
+				<option value="bom">Boms</option>
+			</select><br><br>
+			<label for="inputPaletteName">Palette:</label>
+			<select id="inputPaletteName" onchange="changePaletteName()"></select>
+			<button onclick="addPalette()">Copy...</button>
+			<button onclick="deletePalette()">Delete</button>
+			<label for="inputPaletteVariant">Alternate variant?</label>
+			<input id="inputPaletteVariant" type="checkbox" onchange="changePaletteVariant(true)"/>
+			<label for="inputEditAll">Edit all variants?</label>
+			<input id="inputEditAll" type="checkbox" onchange="changeEditAll()"></input><br>
+			<label for="inputPaletteColor">Selected color:</label>
+			<select id="inputPaletteWhichColor" onchange="changePaletteWhichColor()"></select>
+			<label for="inputColor">Color:</label>
+			<input id="inputColor" type="color" onchange="changeColor()"></input>
+			<label for="inputAlpha">Alpha:</label>
+			<input id="inputAlpha" type="range" min="0" max="255" onchange="changeColor()"></input><br>
+		</div>
 	</div>
-	<script src="script.js"/>
+	<script src="script.js"></script>
 </body>
 </html>

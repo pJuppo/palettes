@@ -1,0 +1,27 @@
+[
+	{
+		"name": "buster",
+		"path": "buster.png",
+		"type": 0
+	},
+	{
+		"name": "bom",
+		"path": "bom.png",
+		"type": 0
+	},
+	{
+		"name": "bom edge",
+		"path": "bom edge.png",
+		"type": 0
+	},
+	{
+		"name": "pattern",
+		"path": "pattern.png",
+		"type": 1
+	},
+	{
+		"name": "pipe",
+		"path": "pipe.png",
+		"type": 0
+	}
+]

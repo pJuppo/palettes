@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "splatter-kings";
+    src: url("splatterKings.woff2") format("woff2");
+}
+
+* {
+    font-family: sans-serif;
+}
+
+#sectionContent {
+    text-align: center;
+    display: none;
+}
+
+#sectionEdit {
+    display: none;
+}
